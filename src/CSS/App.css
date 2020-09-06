@@ -2,3 +2,8 @@ body {
   text-align: center;
 }
 
+.nav-bar-app{
+	background-image: linear-gradient(to bottom right, #000000, #696969, #dcdcdc, #ffffff);
+
+}
+

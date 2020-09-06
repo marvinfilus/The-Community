@@ -24,6 +24,10 @@ class UserProfile extends Component {
 
 	}
 
+	logOut(){
+		this.props.logOut.bind(this);
+	}
+
 	render(){
 		const name = this.state.name;
 		const birth = this.state.birth;
@@ -31,52 +35,22 @@ class UserProfile extends Component {
 		const location = this.state.location;
 		return(
 			<div className="user-container">
-				<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
-				  <div class="container">
-				    <a class="navbar-brand" href="#">
-				          <img src="http://placehold.it/150x50?text=Logo" alt=""/>
-				        </a>
-				    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-				          <span class="navbar-toggler-icon"></span>
-				        </button>
-				    <div class="collapse navbar-collapse" id="navbarResponsive">
-				      <ul class="navbar-nav ml-auto">
-				        <li class="nav-item active">
-				          <a class="nav-link" href="#">Home
-				                <span class="sr-only">(current)</span>
-				              </a>
-				        </li>
-				        <li class="nav-item">
-				          <a class="nav-link" href="#">About</a>
-				        </li>
-				        <li class="nav-item">
-				          <a class="nav-link" href="#">Services</a>
-				        </li>
-				        <li class="nav-item">
-				          <a class="nav-link" href="#">Contact</a>
-				        </li>
-				        <li class="nav-item">
-				          <a class="nav-link" href="#"><Logout/></a>
-				        </li>
-				      </ul>
-				    </div>
-				  </div>
-				</nav>
+				
 
-				<h1 class="my-4">Welcome
+				<h1 className="my-4">Welcome
 				    <small>{name}</small>
 				  </h1>
 
-				  <div class="row">
+				  <div className="row">
 
-				    <div class="col-md-8">
-				      <img class="img-fluid" src="http://placehold.it/750x500" alt=""/>
+				    <div className="col-md-8">
+				      <img className="img-fluid" src="http://placehold.it/750x500" alt=""/>
 				    </div>
 
-				    <div class="col-md-4">
-				      <h3 class="my-3">Project Description</h3>
+				    <div className="col-md-4">
+				      <h3 className="my-3">Project Description</h3>
 					<p> Project desciption </p>
-				      <h3 class="my-3">Project Details</h3>
+				      <h3 className="my-3">Project Details</h3>
 				      <ul>
 				        <li className="li-one">{name}</li>
 				        <li className="li-two">{birth}</li>
@@ -87,31 +61,31 @@ class UserProfile extends Component {
 
 				  </div>
 
-				  <h3 class="my-4">Related Projects</h3>
+				  <h3 className="my-4">Related Projects</h3>
 
-				  <div class="row">
+				  <div className="row">
 
-				    <div class="col-md-3 col-sm-6 mb-4">
+				    <div className="col-md-3 col-sm-6 mb-4">
 				      <a href="#">
-				            <img class="img-fluid" src="http://placehold.it/500x300" alt=""/>
+				            <img className="img-fluid" src="http://placehold.it/500x300" alt=""/>
 				          </a>
 				    </div>
 
-				    <div class="col-md-3 col-sm-6 mb-4">
+				    <div className="col-md-3 col-sm-6 mb-4">
 				      <a href="#">
-				            <img class="img-fluid" src="http://placehold.it/500x300" alt=""/>
+				            <img className="img-fluid" src="http://placehold.it/500x300" alt=""/>
 				          </a>
 				    </div>
 
-				    <div class="col-md-3 col-sm-6 mb-4">
+				    <div className="col-md-3 col-sm-6 mb-4">
 				      <a href="#">
-				            <img class="img-fluid" src="http://placehold.it/500x300" alt=""/>
+				            <img className="img-fluid" src="http://placehold.it/500x300" alt=""/>
 				          </a>
 				    </div>
 
-				    <div class="col-md-3 col-sm-6 mb-4">
+				    <div className="col-md-3 col-sm-6 mb-4">
 				      <a href="#">
-				            <img class="img-fluid" src="http://placehold.it/500x300" alt=""/>
+				            <img className="img-fluid" src="http://placehold.it/500x300" alt=""/>
 				          </a>
 				    </div>
 

@@ -9,7 +9,7 @@ import firebase from 'firebase';
 import 'jquery/dist/jquery.js';
 import 'popper.js/dist/umd/popper.js';
 
-
+import FirstTime from './FirstTime.js';
 import Login from './Login.js';
 import Logout from'./Logout.js';
 import UserProfile from'./UserProfile.js';
@@ -21,9 +21,12 @@ class App extends Component {
 	constructor() {
 		super();
 		this.state = {
+			firstTime:true,
+			navbar: false,
 			user:{},
 			uid:false,
-			redirect:""
+			redirect:"",
+			
 		}
 	}
 
@@ -31,23 +34,35 @@ class App extends Component {
 		const that = this;
 		const state = this.state;
 		console.log($(this));
-		$('.button').on('click', function(){
-			console.log("it worked")
-		})
+
+		//to hide the nav bar
+		$('.nav-bar-app').hide();
 
 		firebase.auth().onAuthStateChanged(function(user) {
-		  if (user) {
-		    // User is signed in.
-		    console.log(user.uid);
-
-		    that.setState({ user:user, redirect : '/'+user.uid});
-		    console.log('/'+that.state.user.uid);
-		  } else {
-		    // No user is signed in.
-		    that.setState({ uid : false})
-		    console.log('no user', state.uid )
-		  }
+			if (user) {
+				let users = user;
+				console.log(users)
+	    	// User is signed in.
+				console.log(user);
+				// $('.nav-bar-app').show();
+				that.setState({ user:user, redirect:user.uid ,uid:user.uid});
+		    	console.log(that.state.redirect, that.state.user);
+			} else {
+		    	// No user is signed in.
+		    	that.setState({ uid : false, redirect : "/"});
+		    	console.log(that.state.uid);
+			}
 		});
+	}
+
+	logOut(){
+		firebase.auth().signOut().then(function() {
+			  // Sign-out successful.
+			  console.log('logged out')
+			}).catch(function(error) {
+			  // An error happened.
+		});
+
 	}
 
 	signin(user,pass){
@@ -76,6 +91,7 @@ class App extends Component {
   	const user = this.state.user;
   	const redirect = this.state.redirect;
   	const uid = user.uid;
+  	const firstTime = this.state.firstTime;
   	// if( redirect ){
   	// 	console.log(redirect)
   	// 	return (
@@ -87,8 +103,40 @@ class App extends Component {
   	return (
   		<Router>
 	    	<div className="App">
+		    	<nav className="navbar nav-bar-app navbar-expand-lg navbar-dark static-top">
+					  <div className="container">
+					    <a className="navbar-brand" href="#">
+					          <img src="http://placehold.it/150x50?text=Logo" alt=""/>
+					        </a>
+					    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+					          <span className="navbar-toggler-icon"></span>
+					        </button>
+					    <div className="collapse navbar-collapse" id="navbarResponsive">
+					      <ul className="navbar-nav ml-auto">
+					        <li className="nav-item active">
+					          <a className="nav-link" href="#">Home
+					            <span className="sr-only">(current)</span>
+					          </a>
+					        </li>
+					        <li className="nav-item">
+					          <a className="nav-link" href="#">About</a>
+					        </li>
+					        <li className="nav-item">
+					          <a className="nav-link" href="#">Services</a>
+					        </li>
+					        <li className="nav-item">
+					          <a className="nav-link" href="#">Contact</a>
+					        </li>
+					        <li className="nav-item">
+					          <a className="nav-link" href="#"><Logout logOut={this.logOut.bind(this)}/></a>
+					        </li>
+					      </ul>
+					    </div>
+					  </div>
+					</nav>
 	    		<Route exact path='/' render={(pickles) =>( uid ? (<Redirect to={`/${uid}`} />) : (<Login signin={this.signin.bind(this)} signup={this.signup.bind(this)}/>)) } />
-	    		<Route path='/:uid' render={(pickles) => ( uid  ? ( <UserProfile />) : (<Redirect to="/"/>) )} />
+	    		<Route path='/:uid' render={(pickles) => ( firstTime ?  (<Redirect to="/:uid/firstTime"/>) : ( <UserProfile logOut={this.logOut.bind(this)} />) )} />
+	    		<Route path='/:uid/firstTime' render={(pickles)=> <FirstTime/> }/>
 	    	</div>
 	    </Router>
   		);

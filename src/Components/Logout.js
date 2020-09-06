@@ -18,15 +18,14 @@ class Logout extends Component {
 		const that = this;
 
 		$('.logout-button').on('click', function(){
-			firebase.auth().signOut().then(function() {
-			  // Sign-out successful.
-			  console.log('logged out')
-			}).catch(function(error) {
-			  // An error happened.
-			});
+			that.logOut();
 		});
 	}
 
+	logOut(){
+		this.props.logOut();
+	}
+	
 	render(){
 		return(
 			<Router>

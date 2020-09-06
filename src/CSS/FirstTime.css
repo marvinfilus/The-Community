@@ -1,0 +1,106 @@
+.container-firsttime{
+	display: flex;
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+	background-image: linear-gradient(to bottom right, #000000, #696969, #dcdcdc, #ffffff);
+	color: black;
+	text-shadow:-1px -1px 0 white;
+}
+
+.card-container-ft{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid black;
+	height: 100%;
+	width: 100%;
+}
+.card-box-ft{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-items: center;
+	/*border: 1px solid blue;*/
+	height: 100%;
+	width: 100%;
+}
+.card-ft{
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	border: 1px solid #696969;
+	box-shadow: 5px 5px #696969;
+	border-radius: 10px;
+	height: 75%;
+	width: 30%;
+}
+
+.card-one-ft{
+	transition: all .2s ease-in-out;
+}
+
+.card-two-ft{
+	transition: all .2s ease-in-out;
+}
+
+.card-three-ft{
+	transition: all .2s ease-in-out;
+}
+
+.card-one-ft:hover{
+	transform: scale(1.1);
+}
+.card-two-ft:hover{
+	transform: scale(1.1);
+}
+
+.card-three-ft:hover{
+	transform: scale(1.1);
+}
+
+.card-input-ft{
+	border: none;
+	border-bottom: 1px solid black;
+	background:transparent;
+	outline: none;
+	text-align: center;
+}
+
+.complete-button-ft{
+	background: #dcdcdc;
+	color:white;
+	border-radius: 5px;
+}
+
+.div-info-ft{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	justify-content: space-around;
+	align-items: center;
+}
+.div-card-two-info{
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	/*height: 30%;*/
+}
+
+.select-gender{
+	width: 40%;
+	border:1px solid black;
+}
+
+.state-dropdown{
+	display: flex;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+	width: 40%;
+	border:1px black solid;
+}
