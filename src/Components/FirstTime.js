@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+// import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import {Redirect} from 'react-router';
 import $ from 'jquery';
 import {base , app } from '../rebase';
@@ -9,8 +9,9 @@ import '../CSS/FirstTime.css';
 
 class FirstTime extends Component {
 
-	constructor(){
-		super();
+	constructor(props){
+		super(props);
+		console.log(props)
 		this.state = {
 			user:{},
 			fname:"",
@@ -22,60 +23,96 @@ class FirstTime extends Component {
 			cStateVal:"",
 			gender:"",
 			school:"",
-			job:""
+			job:"",
+			card1:0,
+			card2:0,
+			card3:0,
+			redirect: false
 		}
 	}
 
-	componentDidMount(){
+	// static getDerivedStateFromProps(props, state){
+	// 	console.log(props.user.uid);
+	// 	if (props.user !== state.user) {
+	// 	  console.log(state);
+	//       return {
+	//         user: props.user,
+	//       };
+	//     }
+	//     console.log(state)
+	// }
+
+	componentDidMount(props){
 		const that = this;
-		const state = that.state
+		let user = that.state.user;
 
 		$('.complete-info-card').hide();
-
-		// $('.card-ft').on('click',function(e){
-		// 	let clickedCard = e.target.closest('section');
-		// 	let cardOne = $('.card-one-ft');
-		// 	let cardTwo = $('.card-two-ft');
-		// 	let cardThree = $('.card-three-ft');
-		// 	let classArray = [cardOne, cardTwo, cardThree];
-		// 	console.log([clickedCard], cardOne, cardTwo, cardThree)
-		// })
-
 		// firstCard
 		$('.button-one-ft').on('click',function(e){
 			let fname = $('.input-fname-ft').val();
 			let lname = $('.input-lname-ft').val();
 			let dob = $('.input-dob-ft').val();
-			console.log(fname,lname,dob);
-			that.setState({ fname:fname,lname:lname,dob:dob});
+			let user = that.state.user
+			if (fname !== "" && lname !== "" && dob !== "") {
+					that.setState({user: {...user, fname:fname, lname:lname, dob:dob, card1:1}});
+			} 
 			console.log(that.state)
+			that.nextFt();
 		})
+
+				console.log(that.state)
+
 		// second card
 		$('.button-two-ft').on('click',function(e){
 			let bcity = $('.input-bcity-ft').val();
 			let ccity = $('.input-ccity-ft').val();
 			let bStateVal = $('.state-one').val();
 			let cStateVal = $('.state-two').val();
-			console.log(bcity,ccity,bStateVal,cStateVal);
-			that.setState({ bcity:bcity,ccity:ccity,bStateVal:bStateVal,cStateVal:cStateVal});
-			console.log(that.state);
+			if(bcity !== "" && ccity !== "" && bStateVal !== "" && cStateVal !== ""){
+				that.setState({user: {...user, bcity:bcity,ccity:ccity,bStateVal:bStateVal,cStateVal:cStateVal,card2:2}});
+			}
+			that.nextFt();
 		})
 		//third Card
 		$('.button-three-ft').on('click',function(){
 			let gender = $('.select-gender').val();
 			let school = $('.school-ft').val();
 			let job = $('.job-ft').val();
-			that.setState({ gender:gender, school:school, job:job})
-			console.log(that.state);
+			if (gender !== "" && school !== "" && job !== "") {
+				that.setState({ user : {...user, gender:gender, school:school, job:job, card3:3}});
+			}
+			that.nextFt();
 		});
 
+
+		// $('.next-ft').hide();   
 		$('.next-ft').on('click',function(){
-			let t
+			let user = that.state.user;
+			let ft = false;
+			let userFt = {...user,ft}
+			that.setState({ redirect : true});
+			that.props.setFtUser(userFt);
+			console.log(that.state.redirect, user)
 		})
 	}
 
+	nextFt(){
+			let card1 = this.state.card1
+			let card2 = this.state.card2
+			let card3 = this.state.card3
+			// console.log(this.props)
+
+			if (card1 !== 0 && card2 !== 0 && card3 !== 0){
+				$('.next-ft').show();
+			}
+		}
+
 	render(){
 		const user = this.state.user;
+
+		if(this.state.redirect !== false){
+			return <Redirect to='/' />
+		}
 
 		return(
 			<div className="container-firsttime">

@@ -23,7 +23,7 @@ class App extends Component {
 		this.state = {
 			firstTime:true,
 			navbar: false,
-			user:{},
+			user:{marvin:'marvin'},
 			uid:false,
 			redirect:"",
 			
@@ -32,18 +32,16 @@ class App extends Component {
 
 	componentDidMount(){
 		const that = this;
-		const state = this.state;
+		let state = this.state;
 		console.log($(this));
 
 		//to hide the nav bar
-		$('.nav-bar-app').hide();
+		// $('.nav-bar-app').hide();
 
 		firebase.auth().onAuthStateChanged(function(user) {
 			if (user) {
 				let users = user;
-				console.log(users)
 	    	// User is signed in.
-				console.log(user);
 				// $('.nav-bar-app').show();
 				that.setState({ user:user, redirect:user.uid ,uid:user.uid});
 		    	console.log(that.state.redirect, that.state.user);
@@ -63,6 +61,12 @@ class App extends Component {
 			  // An error happened.
 		});
 
+	}
+
+	setFtUser(data,ft){
+		let user = this.state.user;
+		this.setState({ user: {...user, ...data}, firstTime:false});
+		console.log(user);
 	}
 
 	signin(user,pass){
@@ -88,10 +92,11 @@ class App extends Component {
 
 
   render() {
-  	const user = this.state.user;
-  	const redirect = this.state.redirect;
-  	const uid = user.uid;
-  	const firstTime = this.state.firstTime;
+  	let user = this.state.user;
+  	let redirect = this.state.redirect;
+  	let uid = user.uid;
+  	let firstTime = this.state.firstTime;
+  	console.log(this.state)
   	// if( redirect ){
   	// 	console.log(redirect)
   	// 	return (
@@ -136,7 +141,7 @@ class App extends Component {
 					</nav>
 	    		<Route exact path='/' render={(pickles) =>( uid ? (<Redirect to={`/${uid}`} />) : (<Login signin={this.signin.bind(this)} signup={this.signup.bind(this)}/>)) } />
 	    		<Route path='/:uid' render={(pickles) => ( firstTime ?  (<Redirect to="/:uid/firstTime"/>) : ( <UserProfile logOut={this.logOut.bind(this)} />) )} />
-	    		<Route path='/:uid/firstTime' render={(pickles)=> <FirstTime/> }/>
+	    		<Route path='/:uid/firstTime' render={(pickles)=> <FirstTime user={user} setFtUser={this.setFtUser.bind(this)}/> }/>
 	    	</div>
 	    </Router>
   		);

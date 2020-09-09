@@ -33,6 +33,7 @@ class UserProfile extends Component {
 		const birth = this.state.birth;
 		const birthPlace = this.state.birthPlace;
 		const location = this.state.location;
+		console.log("hello");
 		return(
 			<div className="user-container">
 				
