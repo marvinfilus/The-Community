@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import {Redirect} from 'react-router';
+import { BrowserRouter as Router} from 'react-router-dom';
+// import {Redirect} from 'react-router';
  import $ from 'jquery';
-import {base , app } from '../rebase';
+// import {base , app } from '../rebase';
 import firebase from 'firebase';
 
 class Logout extends Component {

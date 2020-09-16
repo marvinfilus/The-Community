@@ -13,54 +13,66 @@ class FirstTime extends Component {
 		super(props);
 		console.log(props)
 		this.state = {
-			user:{},
-			fname:"",
-			lname:"",
-			dob:"",
-			bcity:"",
-			ccity:"",
-			bStateVal:"",
-			cStateVal:"",
-			gender:"",
-			school:"",
-			job:"",
+			user:this.props.user,
+			// fname:"",
+			// lname:"",
+			// dob:"",
+			// bcity:"",
+			// ccity:"",
+			// bStateVal:"",
+			// cStateVal:"",
+			// gender:"",
+			// school:"",
 			card1:0,
 			card2:0,
 			card3:0,
 			redirect: false
 		}
+		console.log(this.state)
 	}
 
-	// static getDerivedStateFromProps(props, state){
-	// 	console.log(props.user.uid);
-	// 	if (props.user !== state.user) {
-	// 	  console.log(state);
-	//       return {
-	//         user: props.user,
-	//       };
-	//     }
-	//     console.log(state)
-	// }
+	static getDerivedStateFromProps(props, state){
+		console.log(props.user.uid);
+		if (props.user !== state.user) {
+		  console.log(state);
+	      return {
+	        user: props.user,
+	      };
+	    }
+	    console.log(state)
+	}
 
 	componentDidMount(props){
 		const that = this;
-		let user = that.state.user;
+		console.log(that.props);
 
 		$('.complete-info-card').hide();
+
 		// firstCard
 		$('.button-one-ft').on('click',function(e){
 			let fname = $('.input-fname-ft').val();
 			let lname = $('.input-lname-ft').val();
 			let dob = $('.input-dob-ft').val();
-			let user = that.state.user
+			let info = {fname,lname,dob};
+			let user = that.state.user;
+			let uid = that.state.user.uid;
+			console.log(uid)
 			if (fname !== "" && lname !== "" && dob !== "") {
-					that.setState({user: {...user, fname:fname, lname:lname, dob:dob, card1:1}});
+				base.update(`users/${uid}`, {
+				  data: { ...info },
+				  then(err) {
+				    if (!err) {
+				      // Router.transitionTo('dashboard');
+				      //bears endpint is now {name: 'George', type: 'Grizzly'}
+				      console.log('not an error');
+				    }
+				  }
+				});
+				that.setState({user: {...that.state.user, fname:fname, lname:lname, dob:dob, card1:1}});
 			} 
-			console.log(that.state)
+			console.log(that.state.user)
 			that.nextFt();
-		})
-
-				console.log(that.state)
+		});
 
 		// second card
 		$('.button-two-ft').on('click',function(e){
@@ -68,9 +80,24 @@ class FirstTime extends Component {
 			let ccity = $('.input-ccity-ft').val();
 			let bStateVal = $('.state-one').val();
 			let cStateVal = $('.state-two').val();
-			if(bcity !== "" && ccity !== "" && bStateVal !== "" && cStateVal !== ""){
-				that.setState({user: {...user, bcity:bcity,ccity:ccity,bStateVal:bStateVal,cStateVal:cStateVal,card2:2}});
+			let info = {bcity,ccity,bStateVal,cStateVal}
+			let user = that.state.user;
+			let uid = that.state.user.uid;
+			console.log(uid)
+			if (bcity !== "" && ccity !== "" && bStateVal !== "" && cStateVal !== "") {
+				base.update(`users/${uid}`, {
+				  data: { ...info },
+				  then(err) {
+				    if (!err) {
+				      // Router.transitionTo('dashboard');
+				      //bears endpint is now {name: 'George', type: 'Grizzly'}
+				      console.log('not an error');
+				    }
+				  }
+				});
+				that.setState({user: {...that.state.user, ...info, card2:2}});
 			}
+			console.log(that.state.user)
 			that.nextFt();
 		})
 		//third Card
@@ -78,9 +105,23 @@ class FirstTime extends Component {
 			let gender = $('.select-gender').val();
 			let school = $('.school-ft').val();
 			let job = $('.job-ft').val();
+			let info = {gender,school,job};
+			let user = that.state.user;
+			let uid = user.uid;
 			if (gender !== "" && school !== "" && job !== "") {
-				that.setState({ user : {...user, gender:gender, school:school, job:job, card3:3}});
+				base.update(`users/${uid}`, {
+				  data: { ...info },
+				  then(err) {
+				    if (!err) {
+				      // Router.transitionTo('dashboard');
+				      //bears endpint is now {name: 'George', type: 'Grizzly'}
+				      console.log('not an error');
+				    }
+				  }
+				});
+				that.setState({ user : {...that.state.user, gender:gender, school:school, job:job, card3:3}});
 			}
+			console.log(that.state.user)
 			that.nextFt();
 		});
 
@@ -88,11 +129,20 @@ class FirstTime extends Component {
 		// $('.next-ft').hide();   
 		$('.next-ft').on('click',function(){
 			let user = that.state.user;
+			let uid = user.uid;
 			let ft = false;
-			let userFt = {...user,ft}
-			that.setState({ redirect : true});
+			let userFt = {...user,ft};
+			console.log(userFt);
+			base.update(`users/${uid}`,{
+				data:{ft: false},
+				then(err){
+					if(err){
+						console.log(err)
+					}
+				}
+			})
+			that.setState({ redirect : true, ft:false});
 			that.props.setFtUser(userFt);
-			console.log(that.state.redirect, user)
 		})
 	}
 
@@ -108,7 +158,7 @@ class FirstTime extends Component {
 		}
 
 	render(){
-		const user = this.state.user;
+
 
 		if(this.state.redirect !== false){
 			return <Redirect to='/' />
@@ -264,8 +314,8 @@ class FirstTime extends Component {
 							<h2> Tell us about yourself </h2>
 							<div className="div-info-ft div-card-three-info">
 								<select className="select-gender">
-									<option value="male"> Male </option>
-									<option value="female"> Female </option>
+									<option value="Male"> Male </option>
+									<option value="Female"> Female </option>
 								</select>
 								<p> Gender </p>
 							</div>

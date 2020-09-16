@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import {Redirect} from 'react-router';
+// import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+// import {Redirect} from 'react-router';
 import $ from 'jquery';
 import '../CSS/Login.css';
 

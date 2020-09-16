@@ -13,6 +13,7 @@ import FirstTime from './FirstTime.js';
 import Login from './Login.js';
 import Logout from'./Logout.js';
 import UserProfile from'./UserProfile.js';
+import Header from './Header.js';
 
 import '../CSS/App.css';
 
@@ -21,52 +22,80 @@ class App extends Component {
 	constructor() {
 		super();
 		this.state = {
-			firstTime:true,
+			firstTime:false,
 			navbar: false,
-			user:{marvin:'marvin'},
+			user:{},
 			uid:false,
 			redirect:"",
-			
+			header:false
 		}
 	}
 
 	componentDidMount(){
 		const that = this;
-		let state = this.state;
-		console.log($(this));
-
-		//to hide the nav bar
-		// $('.nav-bar-app').hide();
-
 		firebase.auth().onAuthStateChanged(function(user) {
 			if (user) {
-				let users = user;
-	    	// User is signed in.
-				// $('.nav-bar-app').show();
-				that.setState({ user:user, redirect:user.uid ,uid:user.uid});
-		    	console.log(that.state.redirect, that.state.user);
+				base.fetch(`users/${user.uid}`,{
+					context:this,
+					asArray:false,
+					then(data){
+						console.log(data)
+						if(data.ft === true){
+							console.log(data.ft);
+							that.setState({ user:{
+								uid:user.uid,
+								email: user.email,
+								...data
+								}	
+							});
+						} else {
+							that.setState({ user:{
+								uid:user.uid,
+								email: user.email,
+								ft:false,
+								...data
+								}	
+							});
+						}
+						console.log(that.state.user)
+					}
+				});
 			} else {
 		    	// No user is signed in.
-		    	that.setState({ uid : false, redirect : "/"});
-		    	console.log(that.state.uid);
+		    	that.setState({ user: {}, redirect : "/"});
+
+		    	console.log(that.state.user);
 			}
 		});
+
+		if(!that.state.user.ft){
+			that.setState({user: {...that.state.user, ft: false}});
+			console.log(that.state.user);
+		}
 	}
 
 	logOut(){
 		firebase.auth().signOut().then(function() {
-			  // Sign-out successful.
-			  console.log('logged out')
-			}).catch(function(error) {
-			  // An error happened.
+		  // Sign-out successful.
+		  this.setState({user: {}})
+		  console.log('signed out');
+		}).catch(function(error) {
+		  // An error happened.
 		});
-
 	}
 
-	setFtUser(data,ft){
+	setFtUser(info){
+		let uid = this.state.user.uid;
 		let user = this.state.user;
-		this.setState({ user: {...user, ...data}, firstTime:false});
-		console.log(user);
+		console.log(uid);
+		base.fetch(`users/${uid}`, {
+			context: this,
+			asArray:false,
+			then(data){
+				console.log(data);
+				this.setState({ user:{...user, ...data}})
+			}
+		})
 	}
 
 	signin(user,pass){
@@ -85,7 +114,7 @@ class App extends Component {
 		  // Handle Errors here.
 		  var errorCode = error.code;
 		  var errorMessage = error.message;
-		  console.log(errorCode, error.message)
+		  console.log(errorCode, errorMessage)
 		});
 	}
 
@@ -93,54 +122,21 @@ class App extends Component {
 
   render() {
   	let user = this.state.user;
-  	let redirect = this.state.redirect;
   	let uid = user.uid;
-  	let firstTime = this.state.firstTime;
-  	console.log(this.state)
-  	// if( redirect ){
-  	// 	console.log(redirect)
-  	// 	return (
-  	// 		<Router> 
-  	// 			<Redirect to={redirect} />
-  	// 		</Router>
-  	// 	)
-  	// }
+  	let header = this.state.header;
+  	console.log(user.ft)
+
+  	const Gist = ({match}) => (
+  		<div> {match.params.uid} </div>
+  	)
   	return (
   		<Router>
 	    	<div className="App">
-		    	<nav className="navbar nav-bar-app navbar-expand-lg navbar-dark static-top">
-					  <div className="container">
-					    <a className="navbar-brand" href="#">
-					          <img src="http://placehold.it/150x50?text=Logo" alt=""/>
-					        </a>
-					    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-					          <span className="navbar-toggler-icon"></span>
-					        </button>
-					    <div className="collapse navbar-collapse" id="navbarResponsive">
-					      <ul className="navbar-nav ml-auto">
-					        <li className="nav-item active">
-					          <a className="nav-link" href="#">Home
-					            <span className="sr-only">(current)</span>
-					          </a>
-					        </li>
-					        <li className="nav-item">
-					          <a className="nav-link" href="#">About</a>
-					        </li>
-					        <li className="nav-item">
-					          <a className="nav-link" href="#">Services</a>
-					        </li>
-					        <li className="nav-item">
-					          <a className="nav-link" href="#">Contact</a>
-					        </li>
-					        <li className="nav-item">
-					          <a className="nav-link" href="#"><Logout logOut={this.logOut.bind(this)}/></a>
-					        </li>
-					      </ul>
-					    </div>
-					  </div>
-					</nav>
+		    	<div className="header">{ header ? <Header /> : null} </div>
+		    	<Logout logOut={this.logOut.bind(this)}/>
 	    		<Route exact path='/' render={(pickles) =>( uid ? (<Redirect to={`/${uid}`} />) : (<Login signin={this.signin.bind(this)} signup={this.signup.bind(this)}/>)) } />
-	    		<Route path='/:uid' render={(pickles) => ( firstTime ?  (<Redirect to="/:uid/firstTime"/>) : ( <UserProfile logOut={this.logOut.bind(this)} />) )} />
+	    		<Route path='/:uid' component={UserProfile}/>
+	    		<Route path ='/:uid' component = {Gist} />
 	    		<Route path='/:uid/firstTime' render={(pickles)=> <FirstTime user={user} setFtUser={this.setFtUser.bind(this)}/> }/>
 	    	</div>
 	    </Router>
