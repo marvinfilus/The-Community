@@ -18,25 +18,10 @@ class UserProfile extends Component {
 		}
 	}
 
-	static getDerivedStateFromProps(props){
-		console.log(props)
-	}
-
-	componentDidMount(){
+	componentDidMount(props){
 		const that = this;
-		// let uid = null;
-		console.log(that.props.match.params.uid)
-
-		// let uid = this.props.match.params.id
-		base.fetch(`user/`, {
-			context: this,
-			asArray: false,
-			then(data){
-				that.setState({user: {...data}});
-				// console.log(this.props.match.params)
-			}
-		})
-
+		console.log(that.props.state);
+		that.setUpState(that.props)
 	}
 
 
@@ -45,13 +30,24 @@ class UserProfile extends Component {
 		this.props.logOut.bind(this);
 	}
 
+	setUpState(props){
+		console.log(props.id);
+			base.fetch(`users/${props.id}`, {
+			context: this,
+			asArray: false,
+			then(data){
+				console.log(data)
+				this.setState({user: {...data}});
+				// console.log(this.props.match.params)
+			}
+		})
+	}
+
 	render(){
-		console.log(this.props)
 		const name = 'Marvin';
 		const birth = this.state.birth;
 		const birthPlace = this.state.birthPlace;
 		const location = this.state.location;
-		console.log("hello");
 		return(
 			<Router>
 				<div className="user-container">
@@ -73,7 +69,7 @@ class UserProfile extends Component {
 					      <h3 className="my-3">Project Details</h3>
 					      <ul>
 					        <li className="li-one">{name}</li>
-					        <li className="li-two">{this.props.match.params.uid}</li>
+					        <li className="li-two">{}</li>
 					        <li className="li-three">{birthPlace}</li>
 					        <li className="li-four">{location} </li>
 					      </ul>

@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 import {Redirect} from 'react-router';
 import $ from 'jquery';
 import {base , app } from '../rebase';
@@ -25,7 +26,7 @@ class App extends Component {
 			firstTime:false,
 			navbar: false,
 			user:{},
-			uid:false,
+			uid:"",
 			redirect:"",
 			header:false
 		}
@@ -33,45 +34,7 @@ class App extends Component {
 
 	componentDidMount(){
 		const that = this;
-		firebase.auth().onAuthStateChanged(function(user) {
-			if (user) {
-				base.fetch(`users/${user.uid}`,{
-					context:this,
-					asArray:false,
-					then(data){
-						console.log(data)
-						if(data.ft === true){
-							console.log(data.ft);
-							that.setState({ user:{
-								uid:user.uid,
-								email: user.email,
-								...data
-								}	
-							});
-						} else {
-							that.setState({ user:{
-								uid:user.uid,
-								email: user.email,
-								ft:false,
-								...data
-								}	
-							});
-						}
-						console.log(that.state.user)
-					}
-				});
-			} else {
-		    	// No user is signed in.
-		    	that.setState({ user: {}, redirect : "/"});
-
-		    	console.log(that.state.user);
-			}
-		});
-
-		if(!that.state.user.ft){
-			that.setState({user: {...that.state.user, ft: false}});
-			console.log(that.state.user);
-		}
+		firebase.auth().onAuthStateChanged(this.setUpState.bind(this));
 	}
 
 	logOut(){
@@ -82,6 +45,40 @@ class App extends Component {
 		}).catch(function(error) {
 		  // An error happened.
 		});
+	}
+
+	setUpState(user){
+		this.setState({ user : user, uid:user.uid});
+		let uid = this.state.user.uid;
+		console.log(uid);
+
+		base.update(`users/${uid}`,{
+			data:{ uid: user.uid, email: user.email}
+		});
+		if (user) {
+				base.fetch(`users/${uid}`,{
+					context:this,
+					asArray:false,
+					then(data){
+						console.log(data)
+						console.log(data.ft);
+						this.setState({ user:{
+							uid:user.uid,
+							email: user.email,
+							...data
+							},
+							uid:user.uid,
+							ft:user.ft	
+						});
+					}
+				})
+				console.log(this.state.user)
+			} else {
+		    	// No user is signed in.
+		    	this.setState({ user: {}, redirect : "/"});
+
+		    	console.log(this.state.user);
+			}
 	}
 
 	setFtUser(info){
@@ -118,13 +115,22 @@ class App extends Component {
 		});
 	}
 
+	uidSet(props){
+		console.log('it is doing something');
+	}
+
 
 
   render() {
   	let user = this.state.user;
-  	let uid = user.uid;
+  	let uid = this.state.uid === ""? (this.uidSet()) : this.state.uid;
   	let header = this.state.header;
-  	console.log(user.ft)
+  	var first = this.state.ft ? false : true;
+  	console.log(uid)
+
+  	// if (uid.length > 0){
+  	// 	console.log(user)
+  	// }
 
   	const Gist = ({match}) => (
   		<div> {match.params.uid} </div>
@@ -135,9 +141,9 @@ class App extends Component {
 		    	<div className="header">{ header ? <Header /> : null} </div>
 		    	<Logout logOut={this.logOut.bind(this)}/>
 	    		<Route exact path='/' render={(pickles) =>( uid ? (<Redirect to={`/${uid}`} />) : (<Login signin={this.signin.bind(this)} signup={this.signup.bind(this)}/>)) } />
-	    		<Route path='/:uid' component={UserProfile}/>
+	    		<Route path='/:uid' render={({match}) => ( first ? (<Redirect to='/:uid/firsttime' />):(<UserProfile  state={this.state} id={match.params.uid}/>) )}/>
 	    		<Route path ='/:uid' component = {Gist} />
-	    		<Route path='/:uid/firstTime' render={(pickles)=> <FirstTime user={user} setFtUser={this.setFtUser.bind(this)}/> }/>
+	    		<Route path='/:uid/firstTime' render={({match})=> <FirstTime id={match.params.uid} user={user} setFtUser={this.setFtUser.bind(this)}/> }/>
 	    	</div>
 	    </Router>
   		);

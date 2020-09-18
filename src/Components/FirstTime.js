@@ -31,20 +31,22 @@ class FirstTime extends Component {
 		console.log(this.state)
 	}
 
-	static getDerivedStateFromProps(props, state){
-		console.log(props.user.uid);
-		if (props.user !== state.user) {
-		  console.log(state);
-	      return {
-	        user: props.user,
-	      };
-	    }
-	    console.log(state)
-	}
+	// static getDerivedStateFromProps(props, state){
+	// 	console.log(props.user.uid);
+	// 	if (props.user !== state.user) {
+	// 	  console.log(state);
+	//       return {
+	//         user: props.user,
+	//       };
+	//     }
+	//     console.log(state)
+	// }
 
 	componentDidMount(props){
 		const that = this;
 		console.log(that.props);
+
+		this.setUpState.bind(this);
 
 		$('.complete-info-card').hide();
 
@@ -147,15 +149,17 @@ class FirstTime extends Component {
 	}
 
 	nextFt(){
-			let card1 = this.state.card1
-			let card2 = this.state.card2
-			let card3 = this.state.card3
-			// console.log(this.props)
-
-			if (card1 !== 0 && card2 !== 0 && card3 !== 0){
-				$('.next-ft').show();
-			}
+		let card1 = this.state.card1
+		let card2 = this.state.card2
+		let card3 = this.state.card3
+		if (card1 !== 0 && card2 !== 0 && card3 !== 0){
+			$('.next-ft').show();
 		}
+	}
+
+	setUpState(props){
+		console.log(props);
+	}
 
 	render(){
 
